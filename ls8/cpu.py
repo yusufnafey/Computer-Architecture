@@ -120,7 +120,7 @@ class CPU:
         number2 = self.ram_read(self.pc + 2)
 
         self.alu("MUL", number1, number2) 
-
+ 
     def handle_pop(self):
         value = self.ram[self.reg[SP]]
         reg_num = self.ram_read(self.pc + 1)
