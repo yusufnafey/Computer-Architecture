@@ -6,6 +6,9 @@ LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
 MUL = 0b10100010
+POP = 0b01000110
+PUSH = 0b01000101
+SP = 3
 
 class CPU:
     """Main CPU class."""
@@ -20,7 +23,11 @@ class CPU:
         self.branchtable[LDI] = self.handle_ldi
         self.branchtable[PRN] = self.handle_prn
         self.branchtable[MUL] = self.handle_mul
+        self.branchtable[POP] = self.handle_pop
+        self.branchtable[PUSH] = self.handle_push
+        self.reg[SP] = 0xf4
         self.halted = False
+        
 
     def load(self):
         """Load a program into memory."""
@@ -113,6 +120,18 @@ class CPU:
         number2 = self.ram_read(self.pc + 2)
 
         self.alu("MUL", number1, number2) 
+
+    def handle_pop(self):
+        value = self.ram[self.reg[SP]]
+        reg_num = self.ram_read(self.pc + 1)
+        self.reg[reg_num] = value
+        self.reg[SP] += 1
+
+    def handle_push(self):
+        self.reg[SP] -= 1
+        reg_num = self.ram_read(self.pc + 1)
+        value = self.reg[reg_num]
+        self.ram[self.reg[SP]] = value
 
     def ram_read(self, mar):
         return self.ram[mar]
